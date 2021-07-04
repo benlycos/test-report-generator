@@ -1,10 +1,67 @@
-<div class="container-fluid">
-  <div class="jumbotron text-center">
-    <h1>
-      <img class="logo" src="assets/ngx-rocket-logo.png" alt="angular logo" />
-      <span translate>Hello world !</span>
-    </h1>
-    <app-loader [isLoading]="isLoading"></app-loader>
-    <q [hidden]="isLoading">{{ quote }}</q>
+<div class="container-fluid" style="margin-top: 20px">
+  <div *ngIf="overAllError == ''">
+    <h5 *ngIf="!measurementError" style="margin-bottom: 20px">
+      All measurement validated. All measurement seems to be fine.
+    </h5>
+    <h5 *ngIf="measurementError" style="margin-bottom: 20px">
+      All measurement validated. All measurement seems to be fine.
+    </h5>
+    <h5 style="margin-bottom: 20px">
+      Measurement done at Maxwell server in <b>{{ city }}</b
+      >, <b>{{ region }}</b>
+    </h5>
+    <h5 style="margin-bottom: 20px">
+      Speed test server at <b>{{ speedTestServerLocation }}</b>
+    </h5>
+    <table class="table" style="width: 50%">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Interface/Measurement name</th>
+          <th scope="col">Upload</th>
+          <th scope="col">Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of finalResult; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+
+          <td *ngIf="data.name != 'aggregation' && data.name != 'total'">{{ data.name }} (Mbps)</td>
+          <td *ngIf="data.name == 'aggregation'">
+            <b>{{ data.name }} (%)</b>
+          </td>
+          <td *ngIf="data.name == 'total'">
+            <b>{{ data.name }} (Mbps)</b>
+          </td>
+
+          <td *ngIf="data.name != 'aggregation' && data.name != 'total'">{{ Math.round(data.upload * 100) / 100 }}</td>
+          <td *ngIf="data.name == 'aggregation'">
+            <b>{{ Math.round(data.upload * 100) / 100 }}</b>
+          </td>
+          <td *ngIf="data.name == 'total'">
+            <b>{{ Math.round(data.upload * 100) / 100 }}</b>
+          </td>
+
+          <td *ngIf="data.name != 'aggregation' && data.name != 'total'">
+            {{ Math.round(data.download * 100) / 100 }}
+          </td>
+          <td *ngIf="data.name == 'aggregation'">
+            <b>{{ Math.round(data.download * 100) / 100 }}</b>
+          </td>
+          <td *ngIf="data.name == 'total'">
+            <b>{{ Math.round(data.download * 100) / 100 }} </b>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h5 *ngIf="finalResult.length > 0">
+      <div *ngIf="finalResult[finalResult.length - 1].upload >= 50">Upload seems to work good</div>
+      <div *ngIf="finalResult[finalResult.length - 1].upload <= 50">Upload <b>does not</b> seems to work good</div>
+      <div *ngIf="finalResult[finalResult.length - 1].download >= 50">Download seems to work good</div>
+      <div *ngIf="finalResult[finalResult.length - 1].download <= 50">Download <b>does not</b> seems to work good</div>
+    </h5>
+  </div>
+  <div *ngIf="overAllError != ''">
+    <h2>{{ overAllError }}</h2>
   </div>
 </div>
